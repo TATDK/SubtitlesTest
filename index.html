@@ -1,71 +1,172 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Subtitlestest by TATDK</title>
+<head>
+    <title>Subtitle test</title>
+    <style type="text/css">
+        #player {
+            position: relative;
+            width: 560px;
+            height: 315px;
+        }
+        .subtitles-overlay {
+            position: absolute;
+            top:250px;
+            text-align: center;
+            width:100%;
+        }
+        .subtitles-overlay-text {
+            padding: 2px;
+            background: rgba(0,0,0,0.8);
+            color: #FFFFFF;
+            display: none;
+            line-height: 23px;
+        }
+        #timer {
+            width: 100px;
+            display: inline-block;
+        }
+    </style>
+</head>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Subtitlestest</h1>
-        <p></p>
-
-        <p class="view"><a href="https://github.com/TATDK/SubtitlesTest">View the Project on GitHub <small>TATDK/SubtitlesTest</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/TATDK/SubtitlesTest/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/TATDK/SubtitlesTest/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/TATDK/SubtitlesTest">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/TATDK">TATDK</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+<body>
+    <h1>Player with subtitles</h1>
+    <div id="player">
+        <div id="ytapiplayer">You need Flash player 8+ and JavaScript enabled to view this video.</div>
+        <div class="subtitles-overlay"><span class="subtitles-overlay-text"></span></div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
-  </body>
+    <button onclick="player.playVideo()">Play</button>
+    <button onclick="player.pauseVideo()">Pause</button>
+    <button onclick="player.seekTo(0);player.stopVideo()">Stop</button>
+    Time: <span id="timer"></span>
+    Volume: <input type="range" min="0" max="100" id="volume" onchange="setVolume($(this).val());" />
+    <h1>Subtitle Source</h1>
+    <pre id="subtitles">
+        1
+        00:00:00,300 --> 00:00:02,650
+        We bought to many games
+
+        2
+        00:00:02,900 --> 00:00:04,300
+        Now we got to play them all
+
+        3
+        00:00:05,000 --> 00:00:08,000
+        Multiline test
+        with 2 lines
+
+        4
+        00:00:08,000 --> 00:00:10,000
+        Multiline test
+        now with
+        3 lines
+
+        5
+        00:00:10,000 --> 00:00:12,000
+        Multiline test
+        now with
+        even more
+        lines
+    </pre>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="swfobject.js"></script>
+    <script type="text/javascript">
+        function setVolume(a) {
+            if (a > 0) {
+                if (player.isMuted()) player.unMute();
+            } else {
+                if (!player.isMuted()) player.mute();
+            }
+            player.setVolume(a);
+        }
+
+        function onYouTubePlayerReady(playerId) {
+            player = document.getElementById("yt_player");
+            player.loadVideoById('8DPGGa-K7P8');
+            player.stopVideo();
+            $('#volume').val(player.isMuted() ? 0 : player.getVolume());
+            setInterval(function() { $('#timer').text(subtitleController.fromSeconds(player.getCurrentTime())); subtitleController.show(player.getCurrentTime()); },100);
+        }
+
+        var subtitleController = {
+            init: function() {
+                this.currentSubtitle = -1;
+                this.subtitles = this.parse();
+            },
+            toSeconds: function(a) {
+                var b = 0.0;
+                if (a) {
+                    var c = a.split(':');
+                    for (d = 0;d < c.length;d++)
+                        b = b * 60 + parseFloat(c[d].replace(',', '.'));
+                }
+                return b;
+            },
+            fromSeconds: function(a) {
+                var b = {a:0,b:0,c:0,d:0};
+                if (a) {
+                    b.a = Math.floor(a/3600);
+                    a -= b.a*3600;
+                    b.b = Math.floor(a/60);
+                    a -= b.b*60;
+                    b.c = Math.floor(a);
+                    a -= b.c;
+                    b.d = Math.floor(a*1000);
+                }
+                return (b.a < 10 ? '0' : '') + b.a + ':' + (b.b < 10 ? '0' : '') + b.b + ':' + (b.c < 10 ? '0' : '') + b.c + ',' + (b.d < 100 ? '00' : b.d < 10 ? '0' : '') + b.d;
+            },
+            strip: function(a) {
+                return a.replace(/^\s+|\s+$/g,"");
+            },
+            parse: function() {
+                var a = $('#subtitles').text();
+                a = a.replace(/\r\n|\r|\n/g, '\n')
+        
+                var b = [];
+                a = this.strip(a);
+                var c = a.split('\n\n');
+                for (d in c) {
+                    e = c[d].split('\n');
+                    if (e.length >=2) {
+                        n = e[0];
+                        i = this.strip(e[1].split(' --> ')[0]);
+                        o = this.strip(e[1].split(' --> ')[1]);
+                        t = e[2].trim();
+                        if (e.length > 2) {
+                            for (f = 3;f < e.length;f++)
+                                t += '<br />' + e[f];
+                        }
+                        is = this.toSeconds(i);
+                        os = this.toSeconds(o);
+                        b.push({i:is, o: os, t: t});
+                    }
+                }
+                return b;
+            },
+            show: function(a) {
+                var b = -1;
+                for (c in this.subtitles) {
+                    var d = subtitleController.subtitles[c];
+                    if (d.i > a) continue;
+                    if (d.i < b.i) continue;
+                    b = c;
+                }
+                if (b >= 0) {
+                    if (b != this.currentSubtitle) {
+                        this.currentSubtitle = b;
+                        $('.subtitles-overlay').css('top',313-(23*this.subtitles[b].t.split('<br />').length)).find('span').html(this.subtitles[b].t).css('display','inline');
+                    } else if (this.subtitles[b].o < a) $('.subtitles-overlay').find('span').html('').css('display','none');
+                }
+            }
+        }
+
+        var player,
+            test = $("#test");
+
+        subtitleController.init();
+
+        var params = { allowScriptAccess: "always" };
+        var atts = { id: "yt_player" };
+        swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer&version=3", "ytapiplayer", "560", "315", "8", null, null, params, atts);
+    </script>
+</body>
 </html>
