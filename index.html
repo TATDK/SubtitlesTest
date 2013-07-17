@@ -6,7 +6,6 @@
         #player {
             position: relative;
             width: 560px;
-            height: 315px;
         }
         .subtitles-overlay {
             position: absolute;
@@ -33,43 +32,49 @@
     <div id="player">
         <div id="ytapiplayer">You need Flash player 8+ and JavaScript enabled to view this video.</div>
         <div class="subtitles-overlay"><span class="subtitles-overlay-text"></span></div>
+        <button onclick="player.playVideo()">Play</button>
+        <button onclick="player.pauseVideo()">Pause</button>
+        <button onclick="player.seekTo(0);player.stopVideo()">Stop</button>
+        Time: <span id="timer"></span>
+        Volume: <input type="range" min="0" max="100" id="volume" value="0" onchange="setVolume($(this).val());" /><br />
+        <input type="range" min="0" max="100" id="seeker" value="0" onchange="seekTo($(this).val());" style="width:100%" />
     </div>
-    <button onclick="player.playVideo()">Play</button>
-    <button onclick="player.pauseVideo()">Pause</button>
-    <button onclick="player.seekTo(0);player.stopVideo()">Stop</button>
-    Time: <span id="timer"></span>
-    Volume: <input type="range" min="0" max="100" id="volume" onchange="setVolume($(this).val());" />
     <h1>Subtitle Source</h1>
     <pre id="subtitles">
         1
         00:00:00,300 --> 00:00:02,650
-        We bought to many games
+        <strong>We bought to many games</strong>
 
         2
         00:00:02,900 --> 00:00:04,300
-        Now we got to play them all
+        <strong>Now we got to play them all</strong>
 
         3
         00:00:05,000 --> 00:00:08,000
-        Multiline test
+        <strong style="color:red">Multiline</strong> test
         with 2 lines
 
         4
         00:00:08,000 --> 00:00:10,000
         Multiline test
-        now with
+        <em>now with</em>
         3 lines
 
         5
         00:00:10,000 --> 00:00:12,000
-        Multiline test
+        <strong>Multiline test
         now with
         even more
-        lines
+        lines</strong>
     </pre>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="swfobject.js"></script>
     <script type="text/javascript">
+
+
+        var params = { allowScriptAccess: "always" };
+        var atts = { id: "yt_player" };
+        swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer&version=3", "ytapiplayer", "560", "315", "8", null, null, params, atts);
         function setVolume(a) {
             if (a > 0) {
                 if (player.isMuted()) player.unMute();
@@ -79,12 +84,16 @@
             player.setVolume(a);
         }
 
+        function seekTo(a) {
+            player.seekTo(a);
+        }
+
         function onYouTubePlayerReady(playerId) {
             player = document.getElementById("yt_player");
             player.loadVideoById('8DPGGa-K7P8');
             player.stopVideo();
             $('#volume').val(player.isMuted() ? 0 : player.getVolume());
-            setInterval(function() { $('#timer').text(subtitleController.fromSeconds(player.getCurrentTime())); subtitleController.show(player.getCurrentTime()); },100);
+            setInterval(function() { subtitleController.show(player.getCurrentTime()); },100);
         }
 
         var subtitleController = {
@@ -115,10 +124,10 @@
                 return (b.a < 10 ? '0' : '') + b.a + ':' + (b.b < 10 ? '0' : '') + b.b + ':' + (b.c < 10 ? '0' : '') + b.c + ',' + (b.d < 100 ? '00' : b.d < 10 ? '0' : '') + b.d;
             },
             strip: function(a) {
-                return a.replace(/^\s+|\s+$/g,"");
+                return a === undefined ? '' : a.replace(/^\s+|\s+$/g,"");
             },
             parse: function() {
-                var a = $('#subtitles').text();
+                var a = $('#subtitles').html();
                 a = a.replace(/\r\n|\r|\n/g, '\n')
         
                 var b = [];
@@ -128,8 +137,9 @@
                     e = c[d].split('\n');
                     if (e.length >=2) {
                         n = e[0];
-                        i = this.strip(e[1].split(' --> ')[0]);
-                        o = this.strip(e[1].split(' --> ')[1]);
+                        i = this.strip(e[1].split(' --&gt; ')[0]);
+                        o = this.strip(e[1].split(' --&gt; ')[1]);
+                        console.log(e[2]);
                         t = e[2].trim();
                         if (e.length > 2) {
                             for (f = 3;f < e.length;f++)
@@ -143,6 +153,8 @@
                 return b;
             },
             show: function(a) {
+                $('#timer').text(this.fromSeconds(a));
+                $('#seeker').attr('max',player.getDuration()).val(a);
                 var b = -1;
                 for (c in this.subtitles) {
                     var d = subtitleController.subtitles[c];
@@ -159,14 +171,9 @@
             }
         }
 
-        var player,
-            test = $("#test");
+        var player;
 
         subtitleController.init();
-
-        var params = { allowScriptAccess: "always" };
-        var atts = { id: "yt_player" };
-        swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer&version=3", "ytapiplayer", "560", "315", "8", null, null, params, atts);
     </script>
 </body>
 </html>
