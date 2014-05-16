@@ -1,6 +1,6 @@
 var params = { allowScriptAccess: "always" };
 var atts = { id: "yt_player" };
-swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer&version=3", "ytapiplayer", "853", "480", "8", null, null, params, atts);
+swfobject.embedSWF("https://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer&version=3", "ytapiplayer", "853", "480", "8", null, null, params, atts);
 
 var videoControllers = {
     setVolume: function(a) {
